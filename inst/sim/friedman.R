@@ -40,7 +40,7 @@ dgp <- function(n = 250, p = 5, ...) {
 loglik <- function(d, p, prod_mu, prod_sigma, ...)
     sum(dnorm(d$y, mean = mu(d, prod_mu = prod_mu), sd = sigma(d, prod_sigma = prod_sigma), log = TRUE))
 
-parm <- expand.grid(nsim = nsim, n = 500, ntest = 250, p = c(5, 50), 
+parm <- expand.grid(nsim = nsim, n = 500, ntest = 250, p = c(5, 500), 
                     tau = 0, prod_sigma = c(0, 1), prod_mu = c(0, 1))
 parm <- lapply(1:nrow(parm), function(i) parm[i,])
 

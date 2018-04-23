@@ -5,7 +5,8 @@
   Partitioned and aggregated transformation models
 }
 \usage{
-traforest(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000), ...)
+traforest(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000), 
+          update = TRUE, ...)
 }
 \arguments{
   \item{object}{an object of class \code{\link[mlt]{ctm}} or \code{\link[mlt]{mlt}} specifying the
@@ -14,6 +15,10 @@ traforest(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000), 
               used for finding partitions.}
   \item{mltargs}{arguments to \code{\link[mlt]{mlt}} for fitting the
                  transformation models.}
+  \item{update}{logical, if \code{TRUE}, models and thus scores are updated in
+                every node. If \code{FALSE}, the model and scores are
+                computed once in the root node. The latter option is faster
+                but less accurate.}
   \item{\dots}{arguments to \code{\link[partykit]{cforest}}, at least
                \code{formula} and \code{data}.}
 }

@@ -96,14 +96,14 @@ trafotree <- function(object, parm = 1:length(coef(object)), mltargs = list(maxi
     ret
 }
 
-traforest <- function(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000), ...) {
+traforest <- function(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000), update = TRUE, ...) {
 
     if (inherits(object, "mlt")) object <- object$model
     mltargs$model <- object
     ### note: weights, offset, cluster etc. are evaluated here !!!
     args <- list(...)
     args$ytrafo <- .ctmfit(object, parm, mltargs)
-    args$update <- TRUE
+    args$update <- update
     ret <- do.call("cforest", args)
     ret$model <- object
     ret$mltargs <- mltargs

@@ -28,7 +28,7 @@ plotfun <- function(file, models = c("gt", "tt"), labels = models,
   df0$model <- df0$model[,drop = TRUE]
   df0$model <- factor(as.character(df0$model), levels = models, labels = labels)
 
-  df0$p <- factor(df0$p, levels = c(5, 50),
+  df0$p <- factor(df0$p, levels = sort(unique(df0$p)),
                   labels = c("Low dimensional", "High dimensional"))
   df0$prod_mu <- factor(df0$prod_mu, levels = 0:1, labels = c("Constant mean", "Varying mean"))
   df0$prod_mu <- factor(as.character(df0$prod_mu), 
@@ -77,8 +77,8 @@ plotfun <- function(file, models = c("gt", "tt"), labels = models,
           pm <- df[subscripts, "prod_mu"]
           tdf <- subset(df, prod_sigma == ps & prod_mu == pm)
           bp <- boxplot(split(tdf[["response"]], tdf$model), plot = FALSE)
-          ylim <- range(bp$stats)
-          ylim <- pmin(500, range(bp$stats) * c(.995, 1))
+          ylim <- range(bp$stats) * c(1, 1.2)
+#          ylim <- pmin(500, range(bp$stats) * c(.995, 1))
           if (ylim[1] > 0) ylim[1] <- 0
           list(ylim = ylim) 
       }
@@ -119,7 +119,7 @@ sc <- function(which.given, ..., factor.levels) {
   print(bwplot(L.1 - gtL.1 ~ model | p + prod_mu + prod_sigma, data = df0, 
         panel = mypanel, groups = id, do.out = FALSE,
         prepanel = myprepanel(df0, with(df0, L.1 - gtL.1)),
-        par.settings = ps,
+        par.settings = ps, strip = sc,
         page = function(...) grid.text(main, x = .5, y = .975, 
                                        gp = gpar(cex = 1.25)),
         ylab = "10% quantile risk difference", scales = list(y =
@@ -129,7 +129,7 @@ sc <- function(which.given, ..., factor.levels) {
   print(bwplot(L.5 - gtL.5 ~ model | p + prod_mu + prod_sigma, data = df0, 
         panel = mypanel, groups = id, do.out = FALSE,
         prepanel = myprepanel(df0, with(df0, L.5 - gtL.5)),
-        par.settings = ps,
+        par.settings = ps, strip = sc,
         page = function(...) grid.text(main, x = .5, y = .975, 
                                        gp = gpar(cex = 1.25)),
         ylab = "Absolute error difference", scales = list(y =
@@ -139,7 +139,7 @@ sc <- function(which.given, ..., factor.levels) {
   print(bwplot(L.9 - gtL.9 ~ model | p + prod_mu + prod_sigma, data = df0, 
         panel = mypanel, groups = id, do.out = FALSE,
         prepanel = myprepanel(df0, with(df0, L.9 - gtL.9)),
-        par.settings = ps,
+        par.settings = ps, strip = sc,
         page = function(...) grid.text(main, x = .5, y = .975, 
                                        gp = gpar(cex = 1.25)),
         ylab = "90% quantile risk difference", scales = list(y =
@@ -149,20 +149,48 @@ sc <- function(which.given, ..., factor.levels) {
 forests <- c("gt", "tfbagg", "tfrf", "tfbaggBern", "tfrfBern", "cfbagg", "cfrf", "bagg", "rf")
 trees <- c("gt", "ct", "tt", "ttExSplit", "ttM", "ttBern", "ttBernExSplit")
 models <- c("gt", "ct", "tt", "ttBern", # "tfbagg", 
-            "tfrf", # "tfbaggBern", 
-            "tfrfBern", # "cfbagg", 
             "cfrf", 
+            "rf", "rfBern",
+            "tfrf", # "tfbaggBern", 
+            "tfrfBern") # "cfbagg", 
             # "bagg", 
-           "rf", "rfBern")
 labels <- c("Truth", "CTree (P = 2)", "TTree (P = 2)", "TTree (P = 6)", 
             #"TBagging (lin)", 
-            "TForest (P = 2)", 
-            #"TBagging (nonlin)", 
-            "TForest (P = 6)", 
-            # "CBagging", 
             "CForest (P = 2)", 
             #"Bagging", 
-            "RForest (P = 2)", "RForest (P = 6)") 
+            "RForest (P = 2)", "RForest (P = 6)",
+            "TForest (P = 2)", 
+            #"TBagging (nonlin)", 
+            "TForest (P = 6)") 
+            # "CBagging", 
+logmodels <- c(
+            "gt", 
+            #"ct", 
+            # "tt", 
+            "ttBern", # "tfbagg", 
+            "rfBern",
+            # "tfrf", # "tfbaggBern", 
+            "tfrfBern") # "cfbagg", 
+            # "cfrf", 
+            # "bagg", 
+            #"rf", 
+loglabels <- c(
+            "Truth", 
+            #"CTree (P = 2)", "TTree (P = 2)", 
+            "TTree (P = 6)", 
+            #"TBagging (lin)", 
+            #"TForest (P = 2)", 
+            #"TBagging (nonlin)", 
+            "RForest (P = 6)",
+
+            "TForest (P = 6)") 
+            # "CBagging", 
+            #"CForest (P = 2)", 
+            #"Bagging", 
+            #"RForest (P = 2)", 
+
+
+
 ### R code from vignette source '/home/thothorn/transforest/paper/empeval.Rnw'
 
 ###################################################
@@ -175,7 +203,7 @@ plotfun("2d.rda_out.rda", models = models, labels = labels, wplot = "ll",
 ###################################################
 ### code chunk number 3: ln-2d-ll
 ###################################################
-plotfun("lognormal_2d.rda_out.rda", models = models, labels = labels, wplot = "ll",
+plotfun("lognormal_2d.rda_out.rda", models = logmodels, labels = loglabels, wplot = "ll",
         main = "Tree-Structured Log-Normal (H1a)", hypo = c("H2d", "H2d", "H2b", "H2a"))
 
 
@@ -189,7 +217,7 @@ plotfun("friedman.rda_out.rda", models = models, labels = labels, wplot = "ll",
 ###################################################
 ### code chunk number 5: ln-fm-ll
 ###################################################
-plotfun("lognormal_friedman.rda_out.rda", models = models, labels = labels, wplot = "ll",
+plotfun("lognormal_friedman.rda_out.rda", models = logmodels, labels = loglabels, wplot = "ll",
          main = "Non-Linear Log-Normal (H1b)", hypo = c("H2d", "H2d", "H2b", "H2a"))
 
 
@@ -217,21 +245,21 @@ plotfun("2d.rda_out.rda", models = models, labels = labels, wplot = "L.9",
 ###################################################
 ### code chunk number 5: ln-2d-L1
 ###################################################
-plotfun("lognormal_2d.rda_out.rda", models = models, labels = labels, wplot = "L.1",
+plotfun("lognormal_2d.rda_out.rda", models = logmodels, labels = loglabels, wplot = "L.1",
         main = "Tree-Structured Log-Normal (H1a)", hypo = c("H2d", "H2d", "H2b", "H2a"))
 
 
 ###################################################
 ### code chunk number 6: ln-2d-L5
 ###################################################
-plotfun("lognormal_2d.rda_out.rda", models = models, labels = labels, wplot = "L.5",
+plotfun("lognormal_2d.rda_out.rda", models = logmodels, labels = loglabels, wplot = "L.5",
         main = "Tree-Structured Log-Normal (H1a)", hypo = c("H2d", "H2d", "H2b", "H2a"))
 
 
 ###################################################
 ### code chunk number 7: ln-2d-L9
 ###################################################
-plotfun("lognormal_2d.rda_out.rda", models = models, labels = labels, wplot = "L.9",
+plotfun("lognormal_2d.rda_out.rda", models = logmodels, labels = loglabels, wplot = "L.9",
         main = "Tree-Structured Log-Normal (H1a)", hypo = c("H2d", "H2d", "H2b", "H2a"))
 
 
@@ -259,20 +287,20 @@ plotfun("friedman.rda_out.rda", models = models, labels = labels, wplot = "L.9",
 ###################################################
 ### code chunk number 11: ln-fm-L1
 ###################################################
-plotfun("lognormal_friedman.rda_out.rda", models = models, labels = labels, wplot = "L.1",
+plotfun("lognormal_friedman.rda_out.rda", models = logmodels, labels = loglabels, wplot = "L.1",
          main = "Non-Linear Log-Normal (H1b)", hypo = c("H2d", "H2d", "H2b", "H2a"))
 
 
 ###################################################
 ### code chunk number 12: ln-fm-L5
 ###################################################
-plotfun("lognormal_friedman.rda_out.rda", models = models, labels = labels, wplot = "L.5",
+plotfun("lognormal_friedman.rda_out.rda", models = logmodels, labels = loglabels, wplot = "L.5",
          main = "Non-Linear Log-Normal (H1b)", hypo = c("H2d", "H2d", "H2b", "H2a"))
 
 
 ###################################################
 ### code chunk number 13: ln-fm-L9
 ###################################################
-plotfun("lognormal_friedman.rda_out.rda", models = models, labels = labels, wplot = "L.9",
+plotfun("lognormal_friedman.rda_out.rda", models = logmodels, labels = loglabels, wplot = "L.9",
          main = "Non-Linear Log-Normal (H1b)", hypo = c("H2d", "H2d", "H2b", "H2a"))
 

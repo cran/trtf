@@ -4,6 +4,8 @@ library("partykit")
 library("survival")
 data("GBSG2", package = "TH.data")
 set.seed(290875)
+### Make UL and Windooze happy
+options(digits = 5)
 
 yvar <- numeric_var("y", support = c(100, 2000), bounds = c(0, Inf))
 By <- Bernstein_basis(yvar, order = 5, ui = "incre")

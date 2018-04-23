@@ -6,6 +6,19 @@ RNGkind("L'Ecuyer-CMRG")
 set.seed(29)
 library("sandwich")
 
+trafotree <- function(...) {
+    ret <- try(trtf::trafotree(...))
+    if (inherits(ret, "try-error")) return(NULL)
+    return(ret)
+}
+
+traforest <- function(...) {
+    ret <- try(trtf::traforest(...))
+    if (inherits(ret, "try-error")) return(NULL)
+    return(ret)
+}
+
+
 Ctree <- function(tt, root_trafo_only = FALSE, ...) {
 
     if (root_trafo_only) {
@@ -213,15 +226,17 @@ for (i in 1:nrow(ll)) {
         time[i, "rf"] <- tm(models[["rf"]] <- myrf(brf(fm, data = l1, ntree = ntree, mtry = mtryrf), trtf = models[["tfrf"]]))
     }
 
-    if ("rfBern" %in% methods) {
+    if ("rfBern" %in% methods && !is.null(models[["tfrfBern"]])) {
         stopifnot(!is.null(models[["tfrfBern"]]))
         time[i, "rfBern"] <- tm(models[["rfBern"]] <- myrf(brf(fm, data = l1, ntree = ntree, mtry = mtryrf), trtf = models[["tfrfBern"]]))
     }
 
     ll[i, "gt"] <- loglik(t1, ...)
 
-    for (m in methods)
+    for (m in methods) {
+        if (is.null(models[[m]])) next()
         ll[i,m] <- logLik(models[[m]], newdata = t1)
+    }
 
     tmp <- t1
     tmp$y <- NULL
@@ -231,6 +246,7 @@ for (i in 1:nrow(ll)) {
     quant[["gt"]] <- qu(t1, prob = prob, ...)
 
     for (m in methods) {
+        if (is.null(models[[m]])) next()
         qtmp <- predict(models[[m]], newdata = tmp, type = "quantile", prob = prob, K = 500)
         if (is.list(qtmp)) {
             qtmp <- lapply(qtmp, trtf:::.R2vec)
@@ -241,6 +257,9 @@ for (i in 1:nrow(ll)) {
     }
 
     for (m in c("gt", methods)) {
+        if (m != "gt") {
+            if (is.null(models[[m]])) next()
+        }
         a <- try(u <- t1$y - quant[[m]])
         a <- try(um <- abs(u) * (u < 0) * matrix(1 - prob, ncol = length(prob), nrow = NROW(u), byrow = TRUE))
         a <- try(up <- abs(u) * (u >= 0) * matrix(prob, ncol = length(prob), nrow = NROW(u), byrow = TRUE))

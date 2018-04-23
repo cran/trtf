@@ -31,7 +31,7 @@ dgp <- function(n = 250, p = 5, ...) {
 loglik <- function(d, p, tau, prod_mu, prod_sigma, ...)
     sum(dnorm(d$y, mean = mu(d, tau = tau, prod_mu = prod_mu), sd = sigma(d, tau = tau, prod_sigma = prod_sigma), log = TRUE))
 
-parm <- expand.grid(nsim = nsim, n = 250, ntest = 250, p = c(5, 50), tau = 0.01, 
+parm <- expand.grid(nsim = nsim, n = 250, ntest = 250, p = c(5, 500), tau = 0.01, 
                     prod_sigma = c(0, 1), prod_mu = c(0, 1))
 parm <- lapply(1:nrow(parm), function(i) parm[i,])
 
