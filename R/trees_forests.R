@@ -27,7 +27,11 @@
                 w[-subset] <- 0 ### mlt >= 1.0-3 allows subset but we
                 ### still need the weights to be zero for some operations below
             }
-            if (!is.null(info$coef)) thetastart <- info$coef
+            if (!is.null(info$coef)) {
+                thetastart <- info$coef
+            } else {
+                thetastart <- coef(ctmobject)
+            }
             umod <- suppressWarnings(try(update(ctmobject, weights = w, subset = subset, theta = thetastart), silent = TRUE))
             if (inherits(umod, "try-error") || umod$convergence != 0) {
                 umod <- suppressWarnings(try(update(ctmobject, weights = w, subset = subset), silent = TRUE))

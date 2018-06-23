@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2018-04-18 r74618) -- "Unsuffered Consequences"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
+Copyright (C) 2017 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -805,7 +805,7 @@ $`3`
 > 
 > varimp(tf)
    horTh      age menostat    tsize   tgrade   pnodes  progrec   estrec 
--8.88580  0.62224  1.61547 -1.43777 -3.70364 17.46885  8.48631  4.61486 
+-8.88580  0.62224  1.61547 -1.43781 -3.70355 17.46881  8.48636  4.61486 
 > 
 > mod <- mlt(m, data = GBSG2)
 > logLik(mod)
@@ -824,13 +824,13 @@ $`3`
 > 
 > simulate(tf, newdata = GBSG2[1:3,], nsim = 3)
 [[1]]
-[1] (2000, Inf]      755.054978769049 508.878948093163
+[1] (2000, Inf] 755.05      508.88     
 
 [[2]]
-[1] 1094.06475659808 772.698642566316 311.977284118596
+[1] 1094.06  772.70  311.98
 
 [[3]]
-[1] 869.46569435049  (2000, Inf]      805.630163283171
+[1] 869.47      (2000, Inf] 805.63     
 
 > 
 > cmod <- coxph(Surv(time, cens) ~ horTh + age + menostat + tsize + tgrade +
@@ -838,6 +838,27 @@ $`3`
 > 
 > plot(survfit(cmod, newdata = GBSG2[1:3,]))
 > 
+> ### sanity checks; no mclapply on Windows
+> if (.Platform$OS.type != "windows") {
++ 
++   p11 <- predict(tf, newdata = GBSG2[1:11,], type = "weights")
++   p12 <- predict(tf, newdata = GBSG2[1:11,], type = "weights", cores = 2)
++   stopifnot(all.equal(p11, p12))
++ 
++   p21 <- predict(tf, newdata = GBSG2[1:11,], type = "node")
++   p22 <- predict(tf, newdata = GBSG2[1:11,], type = "node", cores = 2)
++   stopifnot(all.equal(p21, p22))
++ 
++   p31 <- predict(tf, newdata = GBSG2[1:11,])
++   p32 <- predict(tf, newdata = GBSG2[1:11,], cores = 2)
++   stopifnot(all.equal(p31, p32))
++ 
++   p41 <- predict(tf, newdata = GBSG2[1:11,], type = "coef")
++   p42 <- predict(tf, newdata = GBSG2[1:11,], cores = 2, type = "coef")
++   stopifnot(all.equal(p41, p42))
++ 
++ }
+> 
 > proc.time()
    user  system elapsed 
- 21.288   0.176  21.464 
+ 14.320   0.212  14.486 

@@ -1,5 +1,7 @@
 \name{traforest}
 \alias{traforest}
+\alias{predict.traforest}
+\alias{logLik.traforest}
 \title{Transformation Forests}
 \description{
   Partitioned and aggregated transformation models
@@ -7,6 +9,12 @@
 \usage{
 traforest(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000), 
           update = TRUE, ...)
+\method{predict}{traforest}(object,  newdata, mnewdata = data.frame(1), K = 20, q = NULL,
+    type = c("weights", "node", "coef", "trafo", "distribution", "survivor", "density",
+             "logdensity", "hazard", "loghazard", "cumhazard", "quantile"),
+    OOB = FALSE, simplify = FALSE, trace = FALSE, updatestart = FALSE, 
+    applyfun = NULL, cores = NULL, ...)
+\method{logLik}{traforest}(object, newdata, weights = NULL, OOB = FALSE, coef = NULL,  ...)
 }
 \arguments{
   \item{object}{an object of class \code{\link[mlt]{ctm}} or \code{\link[mlt]{mlt}} specifying the
@@ -19,6 +27,29 @@ traforest(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000),
                 every node. If \code{FALSE}, the model and scores are
                 computed once in the root node. The latter option is faster
                 but less accurate.}
+  \item{newdata}{an optional data frame of observations for the forest.}
+  \item{mnewdata}{an optional data frame of observations for the model.}
+  \item{K}{number of grid points to generate (in the absence of \code{q}).}
+  \item{q}{quantiles at which to evaluate the model.}
+  \item{type}{type of prediction or plot to generate.}
+  \item{OOB}{compute out-of-bag predictions.}
+  \item{simplify}{simplify predictions (if possible).}
+  \item{trace}{a logical indicating if a progress bar shall be printed while
+          the predictions are computed.}
+  \item{updatestart}{try to be smart about starting values for computing
+                     predictions (experimental).}
+  \item{applyfun}{an optional \code{lapply}-style function with arguments
+          \code{function(X, FUN, ...)} for looping over \code{newdata}.
+          The default is to use the
+          basic \code{lapply} function unless the \code{cores} argument is
+          specified (see below).}
+  \item{cores}{numeric. If set to an integer the \code{applyfun} is set to
+          \code{mclapply} with the desired number of \code{cores}.}
+  \item{weights}{an optional vector of weights.}
+  \item{coef}{an optional matrix of precomputed coefficients for
+              \code{newdata} (using \code{predict}). Helps to compute the
+              coefficients once for later reuse (different weights, for
+              example).}
   \item{\dots}{arguments to \code{\link[partykit]{cforest}}, at least
                \code{formula} and \code{data}.}
 }
@@ -82,6 +113,21 @@ abline(h = coef(cmod <- mlt(m, data = GBSG2))["horThyes"])
 ### corresponding baseline hazard function which  _differs_
 ### across age; interpretation of positive / negative treatment effect is,
 ### however, save.
+
+### mclapply doesn't work in Windows
+if (.Platform$OS.type != "windows") {
+
+  ### computing predictions: predicted coefficients
+  cf1 <- predict(tf_cmod, newdata = nd, type = "coef")
+  ### speedup with plenty of RAM and 4 cores
+  cf2 <- predict(tf_cmod, newdata = nd, cores = 4, type = "coef")
+  ### memory-efficient with low RAM and _one_ core
+  cf3 <- predict(tf_cmod, newdata = nd, cores = 4, applyfun = lapply, type = "coef")
+  all.equal(cf1, cf2)
+  all.equal(cf1, cf3)
+
+}
+
 }
 
 }

@@ -126,21 +126,21 @@ predict.trafotree <- function(object, newdata, K = 20, q = NULL,
     ### so coef(object) is still the default
     m <- object$model$model
     w <- weights[,i]
-    if (names(m) == "bresponse" && 
-        inherits(m$bresponse, "Bernstein_basis")) {
-        ### Bernstein: theta_k = f(k / n)
-        y <- object$response
-        su <- variables::support(attr(m$bresponse, "variables"))[[1]]
-        grid <- seq(from = su[1], to = su[2], length.out = length(coef(object)))
-        prob <- attr(y, "prob")(w)(grid)
-        prob <- pmin(1 - .Machine$double.eps, pmax(.Machine$double.eps, prob))
-        theta <- object$model$todistr$q(prob)
-    } 
-    if ((i > 25)) {
+    if (i <= 25) {
+        theta <- coef(object) 
+        if (names(m) == "bresponse" && 
+            inherits(m$bresponse, "Bernstein_basis")) {
+            ### Bernstein: theta_k = f(k / n)
+            y <- object$response
+            su <- variables::support(attr(m$bresponse, "variables"))[[1]]
+            grid <- seq(from = su[1], to = su[2], length.out = length(coef(object)))
+            prob <- attr(y, "prob")(w)(grid)
+            prob <- pmin(1 - .Machine$double.eps, pmax(.Machine$double.eps, prob))
+            theta <- object$model$todistr$q(prob)
+        }
+    } else {
         imin <- which.min(cs <- colSums((weights[, 1:(i - 1), drop = FALSE] - w)^2))
         theta <- cf[[imin]]
-    } else {
-        theta <- coef(object) 
     }
     return(theta)
 }
@@ -148,9 +148,41 @@ predict.trafotree <- function(object, newdata, K = 20, q = NULL,
 predict.traforest <- function(object,  newdata, mnewdata = data.frame(1), K = 20, q = NULL,
     type = c("weights", "node", "coef", "trafo", "distribution", "survivor", "density",
              "logdensity", "hazard", "loghazard", "cumhazard", "quantile"),
-    OOB = FALSE, simplify = FALSE, trace = FALSE, updatestart = FALSE, ...) {
+    OOB = FALSE, simplify = FALSE, trace = FALSE, updatestart = FALSE, 
+    applyfun = NULL, cores = NULL, ...) {
 
     type <- match.arg(type)
+
+    if (!missing(newdata) && !type == "node" && (!is.null(applyfun) || !is.null(cores))) {
+        call <- match.call()
+        if (is.null(applyfun)) {
+            applyfun <- if(is.null(cores)) {
+                lapply  
+            } else {
+                function(X, FUN, ...)
+                    parallel::mclapply(X, FUN, ..., mc.cores = cores)
+            }
+        }
+        i <- 1:nrow(newdata)
+        idx <- cut(i, breaks = (0:cores/cores) * nrow(newdata))
+        idx <- tapply(i, idx, function(x) x, simplify = FALSE)
+        call$applyfun <- call$cores <- NULL
+        ret <- applyfun(idx, function(i) {
+            predict(object = object, newdata = newdata[i,,drop = FALSE],
+                    mnewdata = mnewdata, K = K, q = q, type = type, 
+                    OOB = OOB, simplify = simplify, trace = trace, 
+                    updatestart = updatestart, applyfun = NULL, cores = NULL, ...)
+        })
+        type <- match.arg(type)
+        names(ret) <- NULL
+        if (type == "weights") {
+            ret <- do.call("cbind", ret)
+        } else {
+            ret <- do.call("c", ret)
+        }
+        return(ret)
+    }
+
     tmp <- object
     class(tmp) <- class(tmp)[-1L]
 

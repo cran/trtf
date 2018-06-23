@@ -1,19 +1,36 @@
 \name{trafotree}
 \alias{trafotree}
+\alias{predict.trafotree}
+\alias{logLik.trafotree}
 \title{Transformation Trees}
 \description{
   Partitioned transformation models
 }
 \usage{
 trafotree(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000), ...)
+\method{predict}{trafotree}(object, newdata, K = 20, q = NULL,
+    type = c("node", "coef", "trafo", "distribution", "survivor", "density",
+             "logdensity", "hazard", "loghazard", "cumhazard", "quantile"),
+    perm = NULL, ...)
+\method{logLik}{trafotree}(object, newdata, weights = NULL, perm = NULL, ...)
 }
 \arguments{
   \item{object}{an object of class \code{\link[mlt]{ctm}} or \code{\link[mlt]{mlt}} specifying the
-                abstract model to be partitioned.}
+                abstract model to be partitioned. For \code{predict} and
+                \code{logLik}, \code{object} is an object of class \code{trafotree}.}
   \item{parm}{parameters of \code{object} those corresponding score is
               used for finding partitions.}
   \item{mltargs}{arguments to \code{\link[mlt]{mlt}} for fitting the
                  transformation models.}
+  \item{newdata}{an optional data frame of observations.}
+  \item{K}{number of grid points to generate (in the absence of \code{q}).}
+  \item{q}{quantiles at which to evaluate the model.}
+  \item{type}{type of prediction or plot to generate.}
+  \item{weights}{an optional vector of weights.}
+  \item{perm}{a vector of integers specifying the variables to be permuted
+          prior before splitting (i.e., for computing permutation
+          variable importances). The default \code{NULL} doesn't alter the
+          data, see \code{\link[partykit]{fitted_node}}.}
   \item{\dots}{arguments to \code{\link[partykit]{ctree}}, at least
                \code{formula} and \code{data}.}
 }

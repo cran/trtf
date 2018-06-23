@@ -2,6 +2,15 @@
 \name{NEWS}
 \title{NEWS file for the trtf package}
 
+\section{Changes in Version 0.3-2 (2018-06-22)}{
+  \itemize{
+    \item{Document \code{predict} and \code{logLik} methods.}
+    \item{Add \code{applyfun} and \code{cores} arguments to \code{predict}
+          method for transformation forests (allowing parallel computation
+          of predictions.}
+  }
+}
+
 \section{Changes in Version 0.3-1 (2018-04-20)}{
   \itemize{
     \item{Some improvements in internal functions.}
