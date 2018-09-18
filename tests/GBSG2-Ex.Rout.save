@@ -1,6 +1,6 @@
 
-R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
+Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -31,16 +31,8 @@ The following object is masked from 'package:variables':
 
 Loading required package: libcoin
 Loading required package: mvtnorm
-Loading required package: rpart
 > library("partykit")
 > library("survival")
-
-Attaching package: 'survival'
-
-The following object is masked from 'package:rpart':
-
-    solder
-
 > data("GBSG2", package = "TH.data")
 > set.seed(290875)
 > ### Make UL and Windooze happy
@@ -172,4 +164,4 @@ n1    3   4   6   7
 > 
 > proc.time()
    user  system elapsed 
- 27.952   0.108  28.075 
+ 30.576   0.184  30.841 

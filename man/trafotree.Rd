@@ -7,7 +7,8 @@
   Partitioned transformation models
 }
 \usage{
-trafotree(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000), ...)
+trafotree(object, parm = 1:length(coef(object)), reparm = NULL,
+          mltargs = list(maxit = 10000), ...)
 \method{predict}{trafotree}(object, newdata, K = 20, q = NULL,
     type = c("node", "coef", "trafo", "distribution", "survivor", "density",
              "logdensity", "hazard", "loghazard", "cumhazard", "quantile"),
@@ -20,6 +21,10 @@ trafotree(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000), 
                 \code{logLik}, \code{object} is an object of class \code{trafotree}.}
   \item{parm}{parameters of \code{object} those corresponding score is
               used for finding partitions.}
+  \item{reparm}{optional matrix of contrasts for reparameterisation of the scores.
+                \code{teststat = "quadratic"} is invariant to this operation
+                but \code{teststat = "max"} might be more powerful for
+                example when formulating an implicit into an explicit intercept term.}
   \item{mltargs}{arguments to \code{\link[mlt]{mlt}} for fitting the
                  transformation models.}
   \item{newdata}{an optional data frame of observations.}
@@ -92,6 +97,24 @@ coef(part_cmod)[, "horThyes"]
 nd <- data.frame(horTh = sort(unique(GBSG2$horTh)))
 plot(part_cmod, newdata = nd, 
      tp_args = list(type = "survivor", col = c("cadetblue3", "chartreuse4")))
+
+### same model, but with explicit intercept term and max-type statistic
+### for _variable_ selection
+K <- diag(length(coef(m)) - 1)
+K[upper.tri(K)] <- 1
+K <- cbind(rbind(K, 0), 0)
+K[nrow(K), nrow(K)] <- 1
+### horThyes is not touched, 6th parameter is intercept
+coef(cmod) %*% K 
+(part_cmod_max <- trafotree(m, formula = y ~ horTh | age + menostat + tsize + 
+    tgrade + pnodes + progrec + estrec, data = GBSG2, reparm = K,
+    control = ctree_control(teststat = "max")))
+logLik(part_cmod_max)
+
+### the trees (and log-likelihoods are the same) but the
+### p-values are sometines much smaller in the latter tree
+cbind(format.pval(info_node(node_party(part_cmod))$criterion["p.value",]),
+      format.pval(info_node(node_party(part_cmod_max))$criterion["p.value",]))
 
 }
 \keyword{trees}

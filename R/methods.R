@@ -121,7 +121,7 @@ predict.trafotree <- function(object, newdata, K = 20, q = NULL,
 
 .thetastart <- function(object, weights, i, updatestart, cf) {
 
-    if (!updatestart) return(coef(object))
+    if (!updatestart) return(coef(object, fixed = FALSE))
     ### not sure if better starting values are worth the time,
     ### so coef(object) is still the default
     m <- object$model$model
@@ -202,7 +202,7 @@ predict.traforest <- function(object,  newdata, mnewdata = data.frame(1), K = 20
         q <- mkgrid(mod, n = K)[[mod$response]]
     mltmod <- object$mltobj
     mod <- mltmod$object
-    thetastart <- coef(mod)
+    thetastart <- coef(mod, fixed = FALSE)
 
     ans <- vector(mode = "list", length = ncol(ret))
     names(ans) <- colnames(ret)

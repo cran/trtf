@@ -7,8 +7,8 @@
   Partitioned and aggregated transformation models
 }
 \usage{
-traforest(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000), 
-          update = TRUE, ...)
+traforest(object, parm = 1:length(coef(object)), reparm = NULL,
+          mltargs = list(maxit = 10000), update = TRUE, ...)
 \method{predict}{traforest}(object,  newdata, mnewdata = data.frame(1), K = 20, q = NULL,
     type = c("weights", "node", "coef", "trafo", "distribution", "survivor", "density",
              "logdensity", "hazard", "loghazard", "cumhazard", "quantile"),
@@ -21,6 +21,10 @@ traforest(object, parm = 1:length(coef(object)), mltargs = list(maxit = 10000),
                 abstract model to be partitioned.}
   \item{parm}{parameters of \code{object} those corresponding score is
               used for finding partitions.}
+  \item{reparm}{optional matrix of contrasts for reparameterisation of the scores.
+                \code{teststat = "quadratic"} is invariant to this operation
+                but \code{teststat = "max"} might be more powerful for
+                example when formulating an implicit into an explicit intercept term.}
   \item{mltargs}{arguments to \code{\link[mlt]{mlt}} for fitting the
                  transformation models.}
   \item{update}{logical, if \code{TRUE}, models and thus scores are updated in
