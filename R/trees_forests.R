@@ -37,8 +37,8 @@
                 umod <- suppressWarnings(try(update(ctmobject, weights = w, subset = subset), silent = TRUE))
                 if (inherits(umod, "try-error") || umod$convergence != 0) {
                     mltargs$weights <- w
-                    ### no subset allowed here, so used zero weights (see
-                    ### above)!!!
+                    ### [1]: no subset allowed here, so used zero weights (see
+                    ### above AND below)!!!
                     umod <- try(do.call("mlt", mltargs))
                 }
             }
@@ -55,10 +55,15 @@
             if (estfun) {
                 ret <- estfun(umod, parm = coef(umod, fixed = TRUE))[, parm, drop = FALSE]
                 if (!is.null(subset)) {
-                    tmp <- matrix(0, nrow = length(w), 
-                                  ncol = ncol(ret))
-                    tmp[subset,] <- ret
-                    ret <- tmp
+                    if (NROW(ret) == length(subset)) {
+                        tmp <- matrix(0, nrow = length(w), 
+                                      ncol = ncol(ret))
+                        tmp[subset,] <- ret
+                        ret <- tmp
+                    } else {
+                        ### see [1]
+                        ret[-subset,] <- 0
+                    }                  
                 }
                 if (!is.null(iy)) ret <- rbind(0, ret)
                 if (!is.null(reparm)) ret <- ret %*% reparm
@@ -77,7 +82,11 @@ trafotree <- function(object, parm = 1:length(coef(object)), reparm = NULL,
                       mltargs = list(maxit = 10000), ...) {
 
     ### we only work with the ctm object
-    if (inherits(object, "mlt")) object <- object$model
+    if (inherits(object, "mlt")) {
+        if (is.null(mltargs$scale))
+            mltargs$scale <- object$scale
+        object <- object$model
+    }
     ### this is tricky because parm is only valid
     ### for this ctm object (not not for tram-like objects)
     mltargs$model <- object
