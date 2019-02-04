@@ -2,6 +2,12 @@
 \name{NEWS}
 \title{NEWS file for the trtf package}
 
+\section{Changes in Version 0.3-5 (2019-02-01)}{
+  \itemize{
+    \item{Add R code reproducing empirical results for "Survival Forests under Test".}
+  }
+}
+
 \section{Changes in Version 0.3-4 (2019-01-15)}{
   \itemize{
     \item{Respect \code{scale} argument from \code{object}.}
