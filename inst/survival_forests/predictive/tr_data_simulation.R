@@ -178,4 +178,7 @@ for (i in 1:nrow(args)) {
     loglik[[i]] <- lapply(simdat[[i]], mylogLik)
 }
 
+### remove h, hprime etc because we don't want to store these environments
+simdat <- lapply(simdat, function(x) lapply(x, function(y) y[1:2]))
+
 save(args, simdat, loglik, file='tr_simulated_data.rda')

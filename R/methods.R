@@ -227,7 +227,7 @@ predict.traforest <- function(object,  newdata, mnewdata = data.frame(1), K = 20
         } else {
             cf[[i]] <- umod$coef
             if (type != "coef") {
-                coef(mod) <- umod$coef
+                coef(mod)[names(umod$coef)] <- umod$coef
                 ans[[i]] <- predict(mod, q = q, newdata = mnewdata, type = type, ...)
             }
         }
@@ -260,7 +260,7 @@ simulate.traforest <- function(object, nsim = 1, seed = NULL, newdata,
     mod <- object$model
     ret <- vector(mode = "list", length = nrow(cf))
     for (i in 1:nrow(cf)) {
-        coef(mod) <- cf[i,]
+        coef(mod)[colnames(cf)] <- cf[i,]
         ret[[i]] <- simulate(mod, nsim = nsim, seed = seed, 
                              newdata = newdata[i,,drop = FALSE], bysim = FALSE, ...)[[1]]
     }

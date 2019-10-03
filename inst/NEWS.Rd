@@ -2,6 +2,20 @@
 \name{NEWS}
 \title{NEWS file for the trtf package}
 
+\section{Changes in Version 0.3-6 (2019-10-03)}{
+  \itemize{
+    \item{Add \code{min\_update} parameter; model parameters are only
+          updated when the number of observations in a node exceeds this number.
+          Defaults to two times the number of parameters in the model.}
+    \item{Failure to update model parameters lead to a stop in tree
+          recursion. Following a remark by Stefan Wager, the parameters
+          from the parent node are now used in such a case, allowing
+          larger trees to be grown by keeping the scores constant.
+          Note that \code{update = FALSE} triggers this behaviour 
+          in all nodes below the root node.}
+  }
+}
+
 \section{Changes in Version 0.3-5 (2019-02-01)}{
   \itemize{
     \item{Add R code reproducing empirical results for "Survival Forests under Test".}

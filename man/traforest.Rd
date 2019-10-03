@@ -8,7 +8,8 @@
 }
 \usage{
 traforest(object, parm = 1:length(coef(object)), reparm = NULL,
-          mltargs = list(maxit = 10000), update = TRUE, ...)
+          update = TRUE, min_update = length(coef(object)) * 2,
+          mltargs = list(maxit = 10000),  ...)
 \method{predict}{traforest}(object,  newdata, mnewdata = data.frame(1), K = 20, q = NULL,
     type = c("weights", "node", "coef", "trafo", "distribution", "survivor", "density",
              "logdensity", "hazard", "loghazard", "cumhazard", "quantile"),
@@ -31,6 +32,9 @@ traforest(object, parm = 1:length(coef(object)), reparm = NULL,
                 every node. If \code{FALSE}, the model and scores are
                 computed once in the root node. The latter option is faster
                 but less accurate.}
+  \item{min_update}{number of observations necessary to refit the model in a
+                    node. If less observations are available, the parameters from the parent
+                    node will be reused.}
   \item{newdata}{an optional data frame of observations for the forest.}
   \item{mnewdata}{an optional data frame of observations for the model.}
   \item{K}{number of grid points to generate (in the absence of \code{q}).}
@@ -74,6 +78,12 @@ traforest(object, parm = 1:length(coef(object)), reparm = NULL,
 
   Torsten Hothorn (2018). Top-Down Transformation Choice. \emph{Statistical
   Modelling}, \url{https://arxiv.org/abs/1706.08269}.
+
+  Natalia Korepanova, Heidi Seibold, Verena Steffen and Torsten Hothorn
+  (2019).  Survival Forests under Test: Impact of the Proportional Hazards
+  Assumption on Prognostic and Predictive Forests for ALS Survival.
+  \url{http://arxiv.org/abs/1902.01587}.
+
 }
 \examples{
 

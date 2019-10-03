@@ -8,6 +8,7 @@
 }
 \usage{
 trafotree(object, parm = 1:length(coef(object)), reparm = NULL,
+          min_update = length(coef(object)) * 2,
           mltargs = list(maxit = 10000), ...)
 \method{predict}{trafotree}(object, newdata, K = 20, q = NULL,
     type = c("node", "coef", "trafo", "distribution", "survivor", "density",
@@ -25,6 +26,9 @@ trafotree(object, parm = 1:length(coef(object)), reparm = NULL,
                 \code{teststat = "quadratic"} is invariant to this operation
                 but \code{teststat = "max"} might be more powerful for
                 example when formulating an implicit into an explicit intercept term.}
+  \item{min_update}{number of observations necessary to refit the model in a
+                    node. If less observations are available, the parameters from the parent
+                    node will be reused.}
   \item{mltargs}{arguments to \code{\link[mlt]{mlt}} for fitting the
                  transformation models.}
   \item{newdata}{an optional data frame of observations.}
@@ -56,6 +60,12 @@ trafotree(object, parm = 1:length(coef(object)), reparm = NULL,
 
   Torsten Hothorn (2018). Top-Down Transformation Choice. \emph{Statistical
   Modelling}, \url{https://arxiv.org/abs/1706.08269}.
+
+  Natalia Korepanova, Heidi Seibold, Verena Steffen and Torsten Hothorn
+  (2019).  Survival Forests under Test: Impact of the Proportional Hazards
+  Assumption on Prognostic and Predictive Forests for ALS Survival.
+  \url{http://arxiv.org/abs/1902.01587}.
+
 }
 \examples{
 

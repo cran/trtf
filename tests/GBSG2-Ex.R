@@ -1,4 +1,6 @@
 
+suppressWarnings(RNGversion("3.5.2"))
+
 library("trtf")
 library("partykit")
 library("survival")
