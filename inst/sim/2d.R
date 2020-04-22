@@ -2,7 +2,7 @@
 library("trtf")
 
 nsim <- 100
-ntree <- 100
+ntree <- 1000
 
 sigma <- function(d, tau = .01, prod_sigma = 1, ...)
     1 + pnorm(d$x1, sd = tau, mean = .5) * prod_sigma

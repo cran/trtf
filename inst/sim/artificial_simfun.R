@@ -6,14 +6,18 @@ RNGkind("L'Ecuyer-CMRG")
 set.seed(29)
 library("sandwich")
 
+optim <- mltoptim(auglag = list(itmax = 50,
+                                maxtry = 3, kkt2.check = FALSE), 
+                  trace = FALSE)[1]
+
 trafotree <- function(...) {
-    ret <- try(trtf::trafotree(...))
+    ret <- try(trtf::trafotree(..., mltargs = list(optim = optim)))
     if (inherits(ret, "try-error")) return(NULL)
     return(ret)
 }
 
 traforest <- function(...) {
-    ret <- try(trtf::traforest(...))
+    ret <- try(trtf::traforest(..., mltargs = list(optim = optim)))
     if (inherits(ret, "try-error")) return(NULL)
     return(ret)
 }
@@ -81,7 +85,7 @@ predict.myrf <- function(object, newdata = object$data, OOB = FALSE, type = "wei
     ### extract weights
     rw <- as.list(as.data.frame(object$rf$inbag))
 
-    w <- partykit:::.rfweights(fdata, fnewdata, rw)
+    w <- partykit:::.rfweights(fdata, fnewdata, rw, scale = TRUE)
 
     return(w)
 }

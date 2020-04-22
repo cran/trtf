@@ -4,7 +4,7 @@ set.seed(290875)
 
 pdf("QRF.pdf", width = 12, height = 8)
 
-ntree <- 100
+ntree <- 1000
 n <- 10000
 p <- 10
 x <- runif(n)
@@ -46,12 +46,12 @@ colB <- rgb(0, 0, 0.75, .8)
 q1 <- qnorm(.1, sd = 1 + (x > .5))
 q9 <- qnorm(.9, sd = 1 + (x > .5))
 plot(y ~ x, pch = 19, col = c(col, colRlight)[(y < q1 | y > q9) + 1], cex = .5)
-lines(xn, qQRF[,1], lty = 1, lwd = lwd * 1.5, col = "black")
-lines(xn, qQRF[,2], lty = 1, lwd = lwd * 1.5, col = "black")
-lines(xn, qTRT[,1], lty = 2, lwd = lwd * 1.5, col = colB)
-lines(xn, qTRT[,2], lty = 2, lwd = lwd * 1.5, col = colB)
-lines(xn, unlist(qTRF[[1]]), lty = 1, lwd = lwd * 1.5, col = colB)
-lines(xn, unlist(qTRF[[2]]), lty = 1, lwd = lwd * 1.5, col = colB)
+lines(xn, qQRF[,1], lty = 1, lwd = lwd * 1.5, col = "black", type = "S")
+lines(xn, qQRF[,2], lty = 1, lwd = lwd * 1.5, col = "black", type = "S")
+lines(xn, qTRT[,1], lty = 2, lwd = lwd * 1.5, col = colB, type = "S")
+lines(xn, qTRT[,2], lty = 2, lwd = lwd * 1.5, col = colB, type = "S")
+lines(xn, unlist(qTRF[[1]]), lty = 1, lwd = lwd * 1.5, col = colB, type = "S")
+lines(xn, unlist(qTRF[[2]]), lty = 1, lwd = lwd * 1.5, col = colB, type = "S")
 legend("topleft", lty = c(1, 2, 1), lwd = c(lwd * 1.5, lwd * 1.5, lwd * 1.5),
        col = c("black", colB, colB),
        legend = c("Quantile Regression Forest", "Transformation Tree", "Transformation Forest"),

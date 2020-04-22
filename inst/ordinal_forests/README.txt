@@ -22,5 +22,3 @@ In each subfolder you will find an instruction on how to run the experiments.
   functioncal rating scales of patients suffering from Amyotrophic Lateral
   Sclerosis (ALS).
 
-The code in "ALS" subfolder sources the functions from subfolder "empeval". We
-therefore recommend not to change the structure of the folders.

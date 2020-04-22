@@ -36,7 +36,8 @@
             }
             ### update parameters when there are more than min_update
             ### observations
-            if (length(subset) > min_update) {
+            nw <- if (is.null(subset)) sum(w) else sum(w[subset])
+            if (nw > min_update) {
                 umod <- suppressWarnings(try(update(ctmobject, weights = w, 
                     subset = subset, theta = thetastart), silent = TRUE))
                 if (inherits(umod, "try-error") || umod$convergence != 0) {

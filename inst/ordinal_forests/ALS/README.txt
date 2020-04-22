@@ -20,7 +20,8 @@ Reproducing the re-analysis:
  
 - As written in the manuscript, the patient-level data is available to registered
   users from https://nctu.partners.org/ProACT.
-  The code for data preprocessing is available in the \pkg{TH.data} add-on package.
+  The code for data preprocessing is available in the \pkg{TH.data} add-on
+  R package.
 
 - The R-script '01_ALS_sample.R' generates the 100 random splits of the data set
   and saves them as 'ALS_samples.rda' to the same directory.
@@ -28,11 +29,11 @@ Reproducing the re-analysis:
 - To compare the seven methods that predict the “Respiratory” ALSFRS-R score at
   half a year after diagnosis based on the 100 random splits are estimated while
   running the file '02_run_1_100.R'. For this, the file 'ALS_analysis.R' is ran
-  within a for-loop. The out-of-sample log-likelihoods are saved to the file
-  'ALS_results_combined.rda' in the same directory.
+  within a for-loop using the functions of the 'ALS_competitors.R' file.
+  The out-of-sample log-likelihoods and the quadratic weighted Cohen's Kappa are
+  saved to the file 'ALS_results_combined.rda' in the same directory.
 
-- The R-script '03_summary_plot.R' allows you to plot the results according to
-  Figure 2 of the manuscript.
+- The R-script '03_summary_plots.R' allows you to plot the results according to
+  Figure 2 and 3 of the manuscript.
 
-The code in "ALS" subfolder sources the code from "empeval". We therefore
-recommend not to change the structure of the folders.
+

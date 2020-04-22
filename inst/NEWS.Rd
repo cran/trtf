@@ -2,6 +2,13 @@
 \name{NEWS}
 \title{NEWS file for the trtf package}
 
+\section{Changes in Version 0.3-7 (2020-04-22)}{
+  \itemize{
+    \item{Setting \code{min\_update} might have caused constant predictions.}
+    \item{Update simulations / demos.}
+  }
+}
+
 \section{Changes in Version 0.3-6 (2019-10-03)}{
   \itemize{
     \item{Add \code{min\_update} parameter; model parameters are only

@@ -18,20 +18,22 @@ simulation procedures.
 Reproducing the empirical evaluation results:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- To generate the data, run '01_data_simulation.R'. As a result, in the same
-  directory, where '01_data_simulation.R' is located, a new file called
-  'simulated_data.rda' will be created.
+- To generate the data, run '01_data_simulation.R'. The resulting simulated data
+  set called 'simulated_data_nsim100.rda' will be saved in the (automatically
+  generated) sub-directory called 'rda'.
   (Note that the whole simulation study with the original experimental conditions
-  is quite time-consuming. You may want to run it on a multi-core server
-  and/or parallelize it.)
+  is quite time-consuming. You may want to run it on a multi-core server.)
 
 - All forest-based prognostic methods with the corresponding predict functions
-  as well as log-likelihood calculations are realized in 'competitors.R'.
+  as well as the log-likelihood and Kullback-Leibler divergence calculations are
+  realized in 'competitors.R'.
 
 - To run the empirical evaluation on the simulated data sets, run '02_empeval.R'.
-  At the end of this, a new RDA-file called 'results_empeval_250.rda' will be
-  written and hence saved in the same directory.
+  At the end of this, the results will again be written and saved to the
+  sub-directory 'rda'. The resulting files are called:
+    o 'results_empeval_nsim100_ntree250.rda', and
+    o 'results_empeval_nsim100_ntree2000.rda'.
 
-- The R-script '03_summary_plot.R' allows you to plot the results according to
-  Figure 1 of the manuscript.
+- The R-script '03_summary_plots.R' allows you to plot the results according to
+  Figure 1, 4, 5, 6, 7, 8, 9, 10, 11, and 12 of the manuscript.
 
