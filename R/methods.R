@@ -1,19 +1,7 @@
 
-.R2vec <- function(object) {
-    if (!inherits(object, "response")) return(object)
-    ex <- object$exact
-    le <- object$cleft
-    ri <- object$cright
-    rex <- ex
-    rle <- le
-    rri <- ri
-    rex[is.na(ex)] <- 0
-    rle[is.na(le) | !is.finite(le)] <- 0
-    rri[is.na(ri) | !is.finite(ri)] <- 0
-    ### (-Inf, x] -> x and (x, Inf) -> x
-    rex + (rle + ifelse(is.finite(ri) & is.finite(le), (rri - rle)/2, rri))
-}
-
+### for historical reasons only, mlt defines as.double.response
+### starting with mlt 1.3-2
+.R2vec <- as.double
 
 coef.trafotree <- function(object, ...)
     object$coef
@@ -106,15 +94,15 @@ predict.trafotree <- function(object, newdata, K = 20, q = NULL,
 
     if (missing(newdata)) newdata <- data_party(object)
 
-    ### <FIXME> need .R2vec??? </FIXME>
-    pr <- .R2vec(predict(mod, newdata = newdata, q = q, type = type, ...))
+    ### <FIXME> need as.double??? </FIXME>
+    pr <- as.double(predict(mod, newdata = newdata, q = q, type = type, ...))
     if (!is.matrix(pr))
         pr <- matrix(pr, nrow = NROW(pr), ncol = NROW(newdata))
     for (nd in levels(nf)) {
         i <- nf == nd
         coef(mod) <- object$coef[nd,]
-        pr[,i] <- .R2vec(predict(mod, newdata = newdata[i,,drop = FALSE], q = q,
-                                 type = type, ...))
+        pr[,i] <- as.double(predict(mod, newdata = newdata[i,,drop = FALSE], q = q,
+                                    type = type, ...))
     } 
     pr
 }

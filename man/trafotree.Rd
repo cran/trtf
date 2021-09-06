@@ -55,16 +55,19 @@ trafotree(object, parm = 1:length(coef(object)), reparm = NULL,
   An object of class \code{trafotree} with corresponding \code{plot}, \code{logLik} and
   \code{predict} methods.}
 \references{
-  Torsten Hothorn and Achim Zeileis (2017). Transformation Forests.
-  \url{https://arxiv.org/abs/1701.02110}.
+
+  Torsten Hothorn and Achim Zeileis (2021). Predictive Distribution 
+  Modelling Using Transformation Forests. 
+  \emph{Journal of Computational and Graphical Statistics},
+  \doi{10.1080/10618600.2021.1872581}.
 
   Torsten Hothorn (2018). Top-Down Transformation Choice. \emph{Statistical
-  Modelling}, \bold{3-4}, 274-298. \url{https://dx.doi.org/10.1177/1471082X17748081}
+  Modelling}, \bold{3-4}, 274-298. \doi{10.1177/1471082X17748081}
 
   Natalia Korepanova, Heidi Seibold, Verena Steffen and Torsten Hothorn
   (2019).  Survival Forests under Test: Impact of the Proportional Hazards
   Assumption on Prognostic and Predictive Forests for ALS Survival.
-  \url{https://dx.doi.org/10.1177/0962280219862586}.
+  \doi{10.1177/0962280219862586}.
 
 }
 \examples{

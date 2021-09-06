@@ -253,7 +253,7 @@ for (i in 1:nrow(ll)) {
         if (is.null(models[[m]])) next()
         qtmp <- predict(models[[m]], newdata = tmp, type = "quantile", prob = prob, K = 500)
         if (is.list(qtmp)) {
-            qtmp <- lapply(qtmp, trtf:::.R2vec)
+            qtmp <- lapply(qtmp, as.double)
             qtmp <- do.call("cbind", qtmp)
         }
         if (is.matrix(qtmp)) qtmp <- t(qtmp)
