@@ -2,12 +2,19 @@
 \name{NEWS}
 \title{NEWS file for the trtf package}
 
+\section{Changes in Version 0.3-9 (2022-01-12)}{
+  \itemize{
+    \item{Remove \code{maxit} argument (was ignored by \code{mlt}).}
+  }
+}
+
 \section{Changes in Version 0.3-8 (2021-09-03)}{
   \itemize{
     \item{Replace \code{.R2vec} by \code{as.double} method.}
     \item{Update references.}
   }
 }
+
 
 \section{Changes in Version 0.3-7 (2020-04-22)}{
   \itemize{

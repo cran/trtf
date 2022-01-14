@@ -107,7 +107,7 @@
 
 trafotree <- function(object, parm = 1:length(coef(object)), reparm = NULL, 
                       min_update = length(coef(object)) * 2, 
-                      mltargs = list(maxit = 10000), ...) {
+                      mltargs = list(), ...) {
 
     ### we only work with the ctm object
     if (inherits(object, "mlt")) {
@@ -146,7 +146,7 @@ trafotree <- function(object, parm = 1:length(coef(object)), reparm = NULL,
 
 traforest <- function(object, parm = 1:length(coef(object)), reparm = NULL,
                       update = TRUE, min_update = length(coef(object)) * 2, 
-                      mltargs = list(maxit = 10000), ...) {
+                      mltargs = list(), ...) {
 
     if (inherits(object, "mlt")) object <- object$model
     ### this is tricky because parm is only valid

@@ -9,7 +9,7 @@
 \usage{
 traforest(object, parm = 1:length(coef(object)), reparm = NULL,
           update = TRUE, min_update = length(coef(object)) * 2,
-          mltargs = list(maxit = 10000),  ...)
+          mltargs = list(),  ...)
 \method{predict}{traforest}(object,  newdata, mnewdata = data.frame(1), K = 20, q = NULL,
     type = c("weights", "node", "coef", "trafo", "distribution", "survivor", "density",
              "logdensity", "hazard", "loghazard", "cumhazard", "quantile"),

@@ -9,7 +9,7 @@
 \usage{
 trafotree(object, parm = 1:length(coef(object)), reparm = NULL,
           min_update = length(coef(object)) * 2,
-          mltargs = list(maxit = 10000), ...)
+          mltargs = list(), ...)
 \method{predict}{trafotree}(object, newdata, K = 20, q = NULL,
     type = c("node", "coef", "trafo", "distribution", "survivor", "density",
              "logdensity", "hazard", "loghazard", "cumhazard", "quantile"),
