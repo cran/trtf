@@ -1,5 +1,6 @@
 
 import("mlt")
+import("tram")
 import("partykit")
 import("Formula")
 importFrom("sandwich", "estfun")
@@ -13,9 +14,9 @@ importFrom("utils",
 
 import("grid")
 importFrom("graphics", "plot")
+importFrom("grDevices", "gray.colors")
 importFrom("stats", "coef", "logLik", "model.frame", "model.weights",
-           "na.pass", "predict", "update", "simulate", "variable.names")
-
+           "na.pass", "predict", "update", "simulate", "variable.names", "resid")
 
 export(trafotree, traforest)
 

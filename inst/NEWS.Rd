@@ -2,11 +2,19 @@
 \name{NEWS}
 \title{NEWS file for the trtf package}
 
+\section{Changes in Version 0.4-0 (2022-04-05)}{
+  \itemize{
+    \item{New \code{intercept} argument for residual-based tree induction (shift and scale).}
+    \item{Plot discrete distributions.}
+  }
+}
+
 \section{Changes in Version 0.3-9 (2022-01-12)}{
   \itemize{
     \item{Remove \code{maxit} argument (was ignored by \code{mlt}).}
   }
 }
+
 
 \section{Changes in Version 0.3-8 (2021-09-03)}{
   \itemize{

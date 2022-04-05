@@ -8,6 +8,7 @@
 }
 \usage{
 traforest(object, parm = 1:length(coef(object)), reparm = NULL,
+          intercept = c("none", "shift", "scale", "shift-scale"),
           update = TRUE, min_update = length(coef(object)) * 2,
           mltargs = list(),  ...)
 \method{predict}{traforest}(object,  newdata, mnewdata = data.frame(1), K = 20, q = NULL,
@@ -26,6 +27,8 @@ traforest(object, parm = 1:length(coef(object)), reparm = NULL,
                 \code{teststat = "quadratic"} is invariant to this operation
                 but \code{teststat = "max"} might be more powerful for
                 example when formulating an implicit into an explicit intercept term.}
+  \item{intercept}{add optional intercept parameters (constraint to zero) to
+                   the model.}
   \item{mltargs}{arguments to \code{\link[mlt]{mlt}} for fitting the
                  transformation models.}
   \item{update}{logical, if \code{TRUE}, models and thus scores are updated in
@@ -99,15 +102,13 @@ library("trtf")
 library("survival")
 ### German Breast Cancer Study Group 2 data set
 data("GBSG2", package = "TH.data")
-
-### set-up Cox model with overall treatment effect in hormonal therapy
-yvar <- numeric_var("y", support = c(100, 2000), bounds = c(0, Inf))
-By <- Bernstein_basis(yvar, order = 5, ui = "incre")
-m <- ctm(response = By, shifting = ~ horTh, todistr = "MinExt", data = GBSG2)
 GBSG2$y <- with(GBSG2, Surv(time, cens))
 
+### set-up Cox model with overall treatment effect in hormonal therapy
+cmod <- Coxph(y ~ horTh, data = GBSG2, support = c(100, 2000), order = 5)
+
 ### overall log-hazard ratio
-coef(cmod <- mlt(m, data = GBSG2))["horThyes"]
+coef(cmod)
 ### roughly the same as 
 coef(coxph(y ~ horTh, data = GBSG2))
 
@@ -116,7 +117,7 @@ coef(coxph(y ~ horTh, data = GBSG2))
 ### estimate age-dependent Cox models (here ignoring all other covariates)
 ctrl <- ctree_control(minsplit = 50, minbucket = 20, mincriterion = 0)
 set.seed(290875)
-tf_cmod <- traforest(m, formula = y ~ horTh | age, control = ctrl, 
+tf_cmod <- traforest(cmod, formula = y ~ horTh | age, control = ctrl, 
                      ntree = 50, mtry = 1, trace = TRUE, data = GBSG2)
 
 ### plot age-dependent treatment effects vs. overall treatment effect

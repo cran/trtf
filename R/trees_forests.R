@@ -1,5 +1,5 @@
 
-.ctmfit <- function(object, parm, mltargs, reparm, 
+.ctmfit <- function(object, parm, intercept, mltargs, reparm, 
                     min_update = length(coef(object)) * 2) {
     
     ctmobject <- object
@@ -29,8 +29,13 @@
                 w[-subset] <- 0 ### mlt >= 1.0-3 allows subset but we
                 ### still need the weights to be zero for some operations below
             }
-            if (!is.null(info$coef)) {
-                thetastart <- info$coef
+            if (missing(info)) info <- NULL
+            if (!is.null(info)) {
+                if (!is.null(info$coef)) {
+                    thetastart <- info$coef
+                } else {
+                    thetastart <- coef(ctmobject, fixed = FALSE)
+                }
             } else {
                 thetastart <- coef(ctmobject, fixed = FALSE)
             }
@@ -80,7 +85,27 @@
             }
             ret <- NULL
             if (estfun) {
-                ret <- estfun(umod, parm = coef(umod, fixed = TRUE))[, parm, drop = FALSE]
+                cf <- coef(umod, fixed = TRUE)
+                if (length(parm) == 0 && intercept == "none")
+                    stop("no splitting parameter defined")
+                if (intercept == "none")
+                    iret <- NULL
+                if (intercept == "shift")
+                    iret <- matrix(resid(umod, parm = cf, what = "shifting"), ncol = 1)
+                if (intercept == "scale")
+                    iret <- matrix(resid(umod, parm = cf, what = "scaling"), ncol = 1)
+                if (intercept == "shift-scale")
+                    iret <- cbind(shift = resid(umod, parm = cf, 
+                                                what = "shifting"),
+                                  scale = resid(umod, parm = cf, 
+                                                what = "scaling"))
+                if (length(parm) == 0) {
+                    ret <- iret
+                } else {
+                    ret <- estfun(umod, parm = coef(umod, fixed = TRUE))[, parm, drop = FALSE]
+                    if (!is.null(reparm)) ret <- ret %*% reparm
+                    ret <- cbind(ret, iret)
+                }
                 if (!is.null(subset)) {
                     if (NROW(ret) == length(subset)) {
                         tmp <- matrix(0, nrow = length(w), 
@@ -93,7 +118,6 @@
                     }                  
                 }
                 if (!is.null(iy)) ret <- rbind(0, ret)
-                if (!is.null(reparm)) ret <- ret %*% reparm
             }
             return(list(estfun = ret, 
                         coefficients = coef(umod, fixed = FALSE), 
@@ -106,6 +130,7 @@
 } 
 
 trafotree <- function(object, parm = 1:length(coef(object)), reparm = NULL, 
+                      intercept = c("none", "shift", "scale", "shift-scale"),
                       min_update = length(coef(object)) * 2, 
                       mltargs = list(), ...) {
 
@@ -116,11 +141,13 @@ trafotree <- function(object, parm = 1:length(coef(object)), reparm = NULL,
         object <- object$model
     }
     ### this is tricky because parm is only valid
-    ### for this ctm object (not not for tram-like objects)
+    ### for this ctm object (not for tram-like objects)
     mltargs$model <- object
     ### note: weights, offset, cluster etc. are evaluated here !!!
     args <- list(...)
+    intercept <- match.arg(intercept)
     args$ytrafo <- .ctmfit(object = object, parm = parm, 
+                           intercept = intercept,
                            mltargs = mltargs, reparm = reparm, 
                            min_update = min_update)
     args$update <- TRUE
@@ -145,6 +172,7 @@ trafotree <- function(object, parm = 1:length(coef(object)), reparm = NULL,
 }
 
 traforest <- function(object, parm = 1:length(coef(object)), reparm = NULL,
+                      intercept = c("none", "shift", "scale", "shift-scale"),
                       update = TRUE, min_update = length(coef(object)) * 2, 
                       mltargs = list(), ...) {
 
@@ -154,7 +182,9 @@ traforest <- function(object, parm = 1:length(coef(object)), reparm = NULL,
     mltargs$model <- object
     ### note: weights, offset, cluster etc. are evaluated here !!!
     args <- list(...)
+    intercept <- match.arg(intercept)
     args$ytrafo <- .ctmfit(object = object, parm = parm, 
+                           intercept = intercept,
                            mltargs = mltargs, reparm = reparm,
                            min_update = min_update)
     args$update <- update
