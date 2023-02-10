@@ -12,8 +12,8 @@
   Source code of simulation experiments is available in directory 
   \code{trtf/inst/sim}.
 
-  A short talk introducing transformation trees and forests is available from
-  \url{https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Transformation-Forests}.
+%  A short talk introducing transformation trees and forests is available from
+%  \url{https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Transformation-Forests}.
 
 }
 \references{

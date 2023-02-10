@@ -1,6 +1,7 @@
 
 library("tram")
 library("trtf")
+library("coin")
 options(digits = 4)
 set.seed(29)
 
@@ -81,3 +82,32 @@ tr4 <- trafotree(m0, formula = y ~ 1 | x1 + x2, data = d,
                  parm = NULL, intercept = "shift-scale", maxdepth = 2)
 logLik(tr4) > logLik(tr0)
 
+### log-normal model
+N <- 100
+x1 <- gl(2, N)
+x2 <- sample(gl(2, N))
+u <- runif(length(x1))
+### log-linear normal shift-scale model
+y <- exp(((qnorm(u) + c(0, 1)[x1]) / exp(.5 * c(0, 1)[x2]) - 1) / 2)
+d <- data.frame(y = y, x1 = x1, x2 = x2)
+
+m0 <- Survreg(y ~ 1, data = d)
+
+r1 <- resid(m0, what = "shifting")
+r2 <- resid(m0, what = "scaling")
+
+tol <- 1e-4
+t1 <- trafotree(m0, formula = y ~ x1 + x2, data = d, intercept = "shift", parm = NULL)
+all.equal(info_node(node_party(t1))$criterion["statistic",],
+c(statistic(independence_test(r1 ~ x1, teststat = "quad")),
+  statistic(independence_test(r1 ~ x2, teststat = "quad"))), tol = tol, check.attributes = FALSE)
+
+t2 <- trafotree(m0, formula = y ~ x1 + x2, data = d, intercept = "scale", parm = NULL)
+all.equal(info_node(node_party(t2))$criterion["statistic",],
+c(statistic(independence_test(r2 ~ x1, teststat = "quad")),
+  statistic(independence_test(r2 ~ x2, teststat = "quad"))), tol = tol, check.attributes = FALSE)
+
+t12 <- trafotree(m0, formula = y ~ x1 + x2, data = d, intercept = "shift-scale", parm = NULL)
+all.equal(info_node(node_party(t12))$criterion["statistic",],
+c(statistic(independence_test(r1 + r2 ~ x1, teststat = "quad")), 
+  statistic(independence_test(r1 + r2 ~ x2, teststat = "quad"))), tol = tol, check.attributes = FALSE)

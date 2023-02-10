@@ -28,7 +28,9 @@ trafotree(object, parm = 1:length(coef(object)), reparm = NULL,
                 but \code{teststat = "max"} might be more powerful for
                 example when formulating an implicit into an explicit intercept term.}
   \item{intercept}{add optional intercept parameters (constraint to zero) to
-                   the model.}
+                   the model. It may make sense to restrict attention to
+                   scores corresponding to those intercept parameters, the additional argument
+                   \code{parm = NULL} is needed in this case.}
   \item{min_update}{number of observations necessary to refit the model in a
                     node. If less observations are available, the parameters from the parent
                     node will be reused.}
