@@ -1,4 +1,6 @@
 
+### reproduces https://doi.org/10.48550/arXiv.1701.02110 Version 1
+
 options(warn = -1L)
 
 ###################################################
@@ -29,15 +31,15 @@ uc_ctm_AB <- ctm(B_m, data = abalone, todistr = "Normal")
 uc_mlt_AB <- mlt(uc_ctm_AB, data = abalone, scale = FALSE)
 
 c_ctm_AB <- ctm(B_m, data = abalone, todistr = "Normal", shift = fm[c(1, 3)])
-c_mlt_AB <- mlt(c_ctm_AB, data = abalone, scale = TRUE, maxit = 2500)
+c_mlt_AB <- mlt(c_ctm_AB, data = abalone, scale = TRUE)
 
 tt_AB <- trafotree(uc_ctm_AB, formula = fm, data = abalone, 
                 control = ctree_control(mincriterion = .95, minsplit = ns*2, minbucket = ns, nmax = nmax),
-                mltargs = list(maxit = 10000, scale = TRUE, gtol = 1e-3, trace = FALSE))
+                mltargs = list(scale = TRUE))
 
 if (FALSE) {
 tf_AB <- traforest(uc_ctm_AB, formula = fm, data = abalone, ntree = 100, trace = TRUE, 
-                  mltargs = list(maxit = 10000, scale = TRUE, gtol = 1e-3, trace = FALSE),
+                  mltargs = list(scale = TRUE),
                   control = ctree_control(mincriterion = 0, minsplit = ns*2, minbucket = ns, nmax = nmax),
                                           mtry = mtry)
 
@@ -58,25 +60,26 @@ var_m <- numeric_var("cmedv", support = quantile(BostonHousing2[[response]], pro
 
 B_m <- Bernstein_basis(var_m, order = 4, ui = "increasing")
 uc_ctm_BH <- ctm(B_m, data = BostonHousing2, todistr = "Normal")
-uc_mlt_BH <- mlt(uc_ctm_BH, data = BostonHousing2, scale = FALSE, trace = FALSE)
+uc_mlt_BH <- mlt(uc_ctm_BH, data = BostonHousing2, scale = FALSE)
 
 c_ctm_BH <- ctm(B_m, data = BostonHousing2, todistr = "Normal", shift = fm[c(1, 3)])
-c_mlt_BH <- mlt(c_ctm_BH, data = BostonHousing2, scale = TRUE, trace = FALSE)
+c_mlt_BH <- mlt(c_ctm_BH, data = BostonHousing2, scale = TRUE)
 
 tt_BH <- trafotree(uc_ctm_BH, formula = fm, data = BostonHousing2, 
                 control = ctree_control(mincriterion = .95, minsplit = 2*ns, minbucket = ns, nmax = nmax),
-                mltargs = list(maxit = 10000, scale = TRUE, gtol = 1e-3, trace = FALSE))
+                mltargs = list(scale = TRUE))
 
 if (FALSE) {
 tf_BH <- traforest(uc_ctm_BH, formula = fm, data = BostonHousing2, ntree = 100, 
                   control = ctree_control(mincriterion = 0, minsplit = 2*ns, minbucket = ns,
                                           nmax = nmax), mtry = mtry, 
-                  trace = TRUE, mltargs = list(maxit = 10000, scale = TRUE, gtol = 1e-3, trace = FALSE))
+                  trace = TRUE, mltargs = list(scale = TRUE))
 
 qrf_BH <- quantregForest(x = BostonHousing2[, all.vars(fm[[3]])], y = BostonHousing2[, all.vars(fm[[2]])], 
                                        nodesize = ns, mtry = mtry, ntree = 100, keep.inbag = TRUE)
 }
 
+if (FALSE) { ### alr3 was archived on CRAN
 data("BigMac2003", package = "alr3")
 response <- "BigMac"
 BigMac2003[[response]] <- as.numeric(BigMac2003[[response]])
@@ -91,25 +94,26 @@ var_m <- numeric_var("BigMac", support = quantile(BigMac2003[[response]], prob =
 
 B_m <- Bernstein_basis(var_m, order = 4, ui = "increasing")
 uc_ctm_BM <- ctm(B_m, data = BigMac2003, todistr = "Normal")
-uc_mlt_BM <- mlt(uc_ctm_BM, data = BigMac2003, scale = FALSE, trace = FALSE)
+uc_mlt_BM <- mlt(uc_ctm_BM, data = BigMac2003, scale = FALSE)
 
 c_ctm_BM <- ctm(B_m, data = BigMac2003, todistr = "Normal", shift = fm[c(1, 3)])
-c_mlt_BM <- mlt(c_ctm_BM, data = BigMac2003, scale = TRUE, trace = FALSE)
+c_mlt_BM <- mlt(c_ctm_BM, data = BigMac2003, scale = TRUE)
 
 tt_BM <- trafotree(uc_ctm_BM, formula = fm, data = BigMac2003, 
                 control = ctree_control(mincriterion = .95, minsplit = 2 * ns, minbucket = ns, nmax = nmax),
-                mltargs = list(maxit = 10000, scale = TRUE, gtol = 1e-3, trace = FALSE))
+                mltargs = list(scale = TRUE))
 
 if (FALSE) {
 tf_BM <- traforest(uc_ctm_BM, formula = fm, data = BigMac2003, ntree = 100, 
                   control = ctree_control(mincriterion = 0, minsplit = 2*ns, minbucket = ns, 
-                  nmax = nmax), mltargs = list(maxit = 10000, scale = TRUE, gtol = 1e-3, trace = FALSE),
+                  nmax = nmax), mltargs = list(scale = TRUE),
                   trace = TRUE, mtry = mtry)
 
 qrf_BM <- quantregForest(x = BigMac2003[, all.vars(fm[[3]])], 
     y = BigMac2003[, all.vars(fm[[2]])], nodesize = ns, mtry = mtry, ntree = 100, keep.inbag = TRUE)
 }
 
+}
 data("Ozone", package = "mlbench")
 Ozone <- subset(Ozone, complete.cases(Ozone))
 Ozone <- as.data.frame(lapply(Ozone, function(x) {
@@ -132,16 +136,16 @@ uc_ctm_Ozone <- ctm(B_m, data = Ozone, todistr = "Normal")
 uc_mlt_Ozone <- mlt(uc_ctm_Ozone, data = Ozone, scale = FALSE)
 
 c_ctm_Ozone <- ctm(B_m, data = Ozone, todistr = "Normal", shift = fm[c(1, 3)])
-c_mlt_Ozone <- mlt(c_ctm_Ozone, data = Ozone, scale = TRUE, maxit = 10000)
+c_mlt_Ozone <- mlt(c_ctm_Ozone, data = Ozone, scale = TRUE)
 
 tt_Ozone <- trafotree(uc_ctm_Ozone, formula = fm, data = Ozone, 
                 control = ctree_control(mincriterion = .95, minsplit = 2*ns, minbucket = ns, nmax = nmax),
-                mltargs = list(maxit = 10000, scale = TRUE, gtol = 1e-3, trace = FALSE))
+                mltargs = list(scale = TRUE))
 
 tf_Ozone <- traforest(uc_ctm_Ozone, formula = fm, data = Ozone, ntree = 100, 
                   control = ctree_control(mincriterion = 0, minsplit = 2*ns,
                   minbucket = ns, nmax = nmax), trace = TRUE, mtry = mtry, 
-                  mltargs = list(maxit = 10000, scale = TRUE, gtol = 1e-3, trace = FALSE))
+                  mltargs = list(scale = TRUE))
 
 qrf_Ozone <- quantregForest(x = Ozone[, all.vars(fm[[3]])], y = Ozone[, all.vars(fm[[2]])], 
                                           nodesize = ns, mtry = mtry, ntree = 100, keep.inbag = TRUE)
@@ -177,7 +181,7 @@ rug(Ozone$V4, col = rgb(.1, .1, .1, .1), lwd = 2)
 q <- mkgrid(uc_mlt_Ozone, n = 100)[[1]]
 
 d <- predict(c_mlt_Ozone, newdata = Ozone, q = q, type="distribution")
-lp <- c(predict(c_mlt_Ozone, newdata = Ozone, q = 0, terms = "bshift"))
+lp <- c(predict(c_mlt_Ozone, newdata = Ozone, q = 1, terms = "bshift"))
 nd <- expand.grid(q = q, lp = -lp)
 nd$d <- c(d)
 pfun <- function(x, y, z, subscripts, at, ...) {
@@ -232,7 +236,7 @@ varimp(tf_Ozone)
 q <- mkgrid(uc_mlt_AB, n = 100)[[1]]
 
 d <- predict(c_mlt_AB, newdata = abalone, q = q, type="distribution")
-lp <- c(predict(c_mlt_AB, newdata = abalone, q = 0, terms = "bshift"))
+lp <- c(predict(c_mlt_AB, newdata = abalone, q = 1, terms = "bshift"))
 nd <- expand.grid(q = q, lp = -lp)
 nd$d <- c(d)
 pfun <- function(x, y, z, subscripts, at, ...) {
@@ -253,10 +257,11 @@ plot(tt_AB, tp_args = list(type = "density", id = FALSE, ylines = 0, K = 100))
 ###################################################
 ### code chunk number 6: BigMac-ltm
 ###################################################
+if (FALSE) {
 q <- mkgrid(uc_mlt_BM, n = 100)[[1]]
 
 d <- predict(c_mlt_BM, newdata = BigMac2003, q = q, type="distribution")
-lp <- c(predict(c_mlt_BM, newdata = BigMac2003, q = 0, terms = "bshift"))
+lp <- c(predict(c_mlt_BM, newdata = BigMac2003, q = 1, terms = "bshift"))
 nd <- expand.grid(q = q, lp = -lp)
 nd$d <- c(d)
 pfun <- function(x, y, z, subscripts, at, ...) {
@@ -272,7 +277,7 @@ print(contourplot(d ~ lp + q, data = nd, panel = pfun, xlab = "Linear Predictor"
 ### code chunk number 7: BigMac-trtree
 ###################################################
 plot(tt_BM, tp_args = list(type = "density", id = FALSE, ylines = 0, K = 100))
-
+}
 
 ###################################################
 ### code chunk number 10: BH-ltm
@@ -280,7 +285,7 @@ plot(tt_BM, tp_args = list(type = "density", id = FALSE, ylines = 0, K = 100))
 q <- mkgrid(uc_mlt_BH, n = 100)[[1]]
 
 d <- predict(c_mlt_BH, newdata = BostonHousing2, q = q, type="distribution")
-lp <- c(predict(c_mlt_BH, newdata = BostonHousing2, q = 0, terms = "bshift"))
+lp <- c(predict(c_mlt_BH, newdata = BostonHousing2, q = 1, terms = "bshift"))
 nd <- expand.grid(q = q, lp = -lp)
 nd$d <- c(d)
 pfun <- function(x, y, z, subscripts, at, ...) {

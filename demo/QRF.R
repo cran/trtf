@@ -1,6 +1,16 @@
 
+### Reproducibility material (Figure 2)
+###
+###     Predictive Distribution Modelling Using Transformation Forests
+###     by Torsten Hothorn & Achim Zeileis
+###     doi: 10.1080/10618600.2021.1872581
+###
+
+
 library("quantregForest")
 set.seed(290875)
+
+CORES <- 6L
 
 pdf("QRF.pdf", width = 12, height = 8)
 
@@ -27,7 +37,7 @@ trf <- traforest(m_y, formula = y ~ ., data = data.frame(y = y, x = x, X),
                  ntree = ntree,
                  control = ctree_control(mincriterion = 0, 
                      minsplit = 25, minbucket = 10), 
-                 mtry = p + 1, trace = TRUE)
+                 mtry = p + 1, trace = TRUE, cores = CORES)
 
 trt <- trafotree(m_y, formula = y ~ ., data = data.frame(y = y, x = x, X))
 
